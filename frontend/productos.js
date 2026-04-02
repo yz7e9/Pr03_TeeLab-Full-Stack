@@ -1,108 +1,54 @@
-const productosJSON = `[
-    {
-        "id": "TSH01",
-        "nombre": "MACACARENA",
-        "descripcion": "Quan balles sense vergonya i el ritme et domina.",
-        "precioBase": 19.95,
-        "tallas": ["S", "M", "L", "XL"],
-        "colores": ["mostaza", "negro", "blanco"],
-        "imagenes": {
-            "mostaza": "img/MACACARENA.png",
-            "negro": "img/MACACARENA_BLACK.png",
-            "blanco": "img/MACACARENA_WHITE.png"
-        },
-        "tags": ["nuevo"]
-    },
-    {
-        "id": "TSH02",
-        "nombre": "NINETIES MODE",
-        "descripcion": "Un homenatge pixelat als anys 90.",
-        "precioBase": 21.50,
-        "tallas": ["S", "M", "L", "XL", "XXL"],
-        "colores": ["gris", "negro"],
-        "imagenes": {
-            "gris": "img/NINETIES.png",
-            "negro": "img/NINETIES_BLACK.png"
-        },
-        "tags": ["retro"]
-    },
-    {
-        "id": "TSH03",
-        "nombre": "RESERVOIR INVADERS",
-        "descripcion": "Quan Tarantino coneix els videojocs clàssics.",
-        "precioBase": 22.90,
-        "tallas": ["M", "L", "XL"],
-        "colores": ["azul", "negro"],
-        "imagenes": {
-            "azul": "img/RESERVOIR.png",
-            "negro": "img/RESERVOIR_BLACK.png"
-        },
-        "tags": ["edicion-especial"]
-    },
-    {
-        "id": "TSH04",
-        "nombre": "VITRUVIAN CODE",
-        "descripcion": "Art, codi i proporció perfecta.",
-        "precioBase": 24.00,
-        "tallas": ["S", "M", "L", "XL"],
-        "colores": ["blanco", "negro"],
-        "imagenes": {
-            "blanco": "img/VITRUVIAN.png",
-            "negro": "img/VITRUVIAN_BLACK.png"
-        },
-        "tags": ["premium"]
-    }
-]`;
+async function init() {
+    const response = await fetch("http://localhost:3001/api/camisetas");
+    const productsJSON = await response.json();
 
-function init() {
-    muestraProductos(JSON.parse(productosJSON))
+    displayProducts(productsJSON);
 }
 
-function muestraProductos(listaProductos) {
-    const seccionProductos = document.getElementById("productos");
+function displayProducts(productList) {
+    const productSection = document.getElementById("productos");
 
-    listaProductos.forEach(producto => {
-        seccionProductos.append(crearArticulo(producto));
+    productList.forEach(product => {
+        productSection.append(createArticle(product));
     });
 }
 
-function crearArticulo(articulo) {
-    console.log(articulo)
-    const articuloEl = document.createElement("article");
+function createArticle(article) {
+    console.log(article)
+    const articleEl = document.createElement("article");
 
-    const titulo = document.createElement("h2");
-    titulo.innerText = articulo.nombre;
+    const title = document.createElement("h2");
+    title.innerText = article.nombre;
 
-    const descripcion = document.createElement("p");
-    descripcion.innerText = articulo.descripcion;
+    const description = document.createElement("p");
+    description.innerText = article.descripcion;
 
-    const precio = document.createElement("p");
-    precio.textContent = articulo.precioBase + "€";
+    const price = document.createElement("p");
+    price.textContent = article.precioBase.toFixed(2) + "€";
 
-    articuloEl.append(crearImagen(articulo));
-    articuloEl.append(titulo);
-    articuloEl.append(crearTags(articulo));
-    articuloEl.append(descripcion);
-    articuloEl.append(precio);
-    articuloEl.append(crearSelectorTallas(articulo));
-    articuloEl.append(crearSelectorColores(articulo));
-    articuloEl.append(crearQuantitat());
-    articuloEl.append(crearBtnCesta());
-    return articuloEl
+    articleEl.append(createImage(article));
+    articleEl.append(title);
+    articleEl.append(createTags(article));
+    articleEl.append(description);
+    articleEl.append(price);
+    articleEl.append(createSelectorSize(article));
+    articleEl.append(createSelectorColor(article));
+    articleEl.append(createAmount(article));
+    return articleEl
 }
 
-function crearImagen(articulo) {
-    const imagen = document.createElement("img");
-    imagen.id = articulo.nombre.toLowerCase() + "-img";
-    imagen.src = articulo.imagenes[articulo.colores[0]];
-    imagen.alt = articulo.nombre;
-    return imagen;
+function createImage(article) {
+    const image = document.createElement("img");
+    image.id = article.nombre.toLowerCase() + "-img";
+    image.src = article.imagenes[article.colores[0]];
+    image.alt = article.nombre;
+    return image;
 }
 
-function crearTags(articulo) {
+function createTags(article) {
     const tags = document.createElement("div");
     tags.className = "tag";
-    articulo.tags.forEach(tag => {
+    article.tags.forEach(tag => {
         const tagEl = document.createElement("h3");
         tagEl.textContent = tag;
         tags.append(tagEl);
@@ -110,11 +56,11 @@ function crearTags(articulo) {
     return tags;
 }
 
-function crearSelectorTallas(articulo) {
+function createSelectorSize(article) {
     const select = document.createElement("select");
-    select.id = articulo.nombre.toLowerCase() + "-tallas-select";
+    select.id = article.nombre.toLowerCase() + "-tallas-select";
 
-    articulo.tallas.forEach(talla => {
+    article.tallas.forEach(talla => {
         const option = document.createElement("option");
         option.value = talla;
         option.textContent = talla;
@@ -124,11 +70,11 @@ function crearSelectorTallas(articulo) {
     return select;
 }
 
-function crearSelectorColores(articulo) {
+function createSelectorColor(article) {
     const select = document.createElement("select");
-    select.id = articulo.nombre.toLowerCase() + "-colores-select";
+    select.id = article.nombre.toLowerCase() + "-colores-select";
 
-    articulo.colores.forEach(color => {
+    article.colores.forEach(color => {
         const option = document.createElement("option");
         option.value = color;
         option.textContent = color;
@@ -137,45 +83,36 @@ function crearSelectorColores(articulo) {
 
     // Referencia: https://stackoverflow.com/questions/35608113/change-image-src-onchange-og-select
     select.addEventListener("change", (e) => {
-        const img = document.getElementById(articulo.nombre.toLowerCase() + "-img");
-        img.src = articulo.imagenes[e.target.value];
+        const img = document.getElementById(article.nombre.toLowerCase() + "-img");
+        img.src = article.imagenes[e.target.value];
     });
 
     return select;
 }
 
-function crearQuantitat() {
-    const quantitatDiv = document.createElement("div");
-    const menos = document.createElement("input");
-    menos.type = "button";
-    menos.value = "-";
+function createAmount(article) {
+    const amountDiv = document.createElement("div");
+    const minus = document.createElement("button");
+    minus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320z"/></svg>`;
 
-    const mas = document.createElement("input");
-    mas.type = "button";
-    mas.value = "+";
+    const plus = document.createElement("button");
+    plus.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z"/></svg>`;
 
-    const valor = document.createElement("input");
-    valor.type = "number";
-    valor.setAttribute("readonly", true);
-    valor.value = 0;
+    const quantity = document.createElement("input");
+    quantity.type = "number";
+    quantity.id = article.nombre.toLowerCase() + "-quantity";
+    quantity.setAttribute("readonly", true);
+    quantity.value = 0;
 
-    menos.addEventListener("click", () => {
-        if (valor.value - 1 >= 0) {
-            valor.value--;
+    minus.addEventListener("click", () => {
+        if (quantity.value - 1 >= 0) {
+            quantity.value--;
         }
     });
-    mas.addEventListener("click", () => valor.value++);
+    plus.addEventListener("click", () => quantity.value++);
 
-    quantitatDiv.append(menos);
-    quantitatDiv.append(valor);
-    quantitatDiv.append(mas);
-    return quantitatDiv;
-}
-
-function crearBtnCesta() {
-    const btn = document.createElement("input");
-    btn.type = "button";
-    btn.value = "Añadir al carrito";
-    btn.className = "btn-cesta";
-    return btn;
+    amountDiv.append(minus);
+    amountDiv.append(quantity);
+    amountDiv.append(plus);
+    return amountDiv;
 }

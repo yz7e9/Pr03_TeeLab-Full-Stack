@@ -112,18 +112,27 @@ article div input[type="number"] {
     background-color: #f0f0f0;
 }
 
-article div input[type="button"] {
+article div button {
     width: 32px;
     height: 32px;
     border: none;
     background-color: #111;
     color: white;
-    font-size: 1.1rem;
     border-radius: 4px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
-article div input[type="button"]:hover {
+article div button svg {
+    width: 16px;
+    height: 16px;
+    fill: white;
+}
+
+article div button:hover {
     background-color: #333;
 }
 
