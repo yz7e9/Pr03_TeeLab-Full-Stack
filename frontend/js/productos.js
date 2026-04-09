@@ -1,4 +1,6 @@
-async function init() {
+import { createBtnCart } from "./cart.js"
+
+export async function initProducts() {
     const response = await fetch("http://localhost:3001/api/camisetas");
     const productsJSON = await response.json();
 
@@ -14,7 +16,6 @@ function displayProducts(productList) {
 }
 
 function createArticle(article) {
-    console.log(article)
     const articleEl = document.createElement("article");
 
     const title = document.createElement("h2");
@@ -34,6 +35,7 @@ function createArticle(article) {
     articleEl.append(createSelectorSize(article));
     articleEl.append(createSelectorColor(article));
     articleEl.append(createAmount(article));
+    articleEl.append(createBtnCart(article));
     return articleEl
 }
 

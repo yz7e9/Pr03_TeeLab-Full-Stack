@@ -1,0 +1,178 @@
+/* Unified global overlay */
+.global-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 101;
+    align-items: center;
+    justify-content: center;
+}
+
+.global-overlay.visible {
+    display: flex;
+}
+
+.checkout-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 102;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.checkout-modal.visible {
+    display: block;
+}
+
+.checkout-modal header {
+    display: ruby-text;
+}
+
+.checkout-modal h2 {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 90%;
+}
+
+.checkout-modal input,
+.checkout-modal textarea {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-height: 36px;
+    max-height: 100px;
+}
+
+.checkout-modal textarea {
+    resize: vertical;
+    max-width: 100%;
+}
+
+.checkout-modal button {
+    width: 100%;
+    padding: 0.6rem;
+    background: #111;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+.checkout-modal hr {
+    margin: 0.5rem 0;
+}
+
+.checkout-modal .checkout-close {
+    position: sticky;
+    top: 0;
+    left: 19.5rem;
+    border: none;
+    margin: -0.5rem -0.5rem 0 0;
+    display: flex;
+    width: auto;
+}
+
+.checkout-modal .checkout-close:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.checkout-modal .checkout-close svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+.checkout-modal .checkout-close:hover svg {
+    fill: #fff;
+}
+
+.checkout-summary {
+    margin-bottom: .5rem;
+    line-height: 1.4;
+    font-size: 0.9rem;
+}
+
+.checkout-summary p {
+    margin: 0.3rem 0;
+}
+
+.checkout-summary strong {
+    display: block;
+    margin-top: 1rem;
+    font-size: 1rem;
+    text-align: right;
+}
+
+.checkout-modal .order-summary {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.checkout-modal .order-summary p:not(.order-items p) {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.3rem 0;
+}
+
+.checkout-modal .order-summary p strong {
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.checkout-modal .order-summary ul {
+    list-style: disc inside;
+    margin: 0.5rem 0;
+    padding-left: 1rem;
+}
+
+.checkout-modal .order-summary li {
+    margin: 0.2rem 0;
+}
+
+.checkout-modal .order-summary strong.total {
+    display: block;
+    margin-top: 0.8rem;
+    font-size: 1rem;
+    text-align: right;
+}
+
+.order-items {
+    margin: 0.5rem 0;
+}
+
+.order-items .order-item {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background: #fafafa;
+}
+
+.order-items .item-header {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.order-items .item-body {
+    font-size: 0.9rem;
+}
+
+.order-items .item-body .price span {
+    font-weight: bold;
+}

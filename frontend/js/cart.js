@@ -1,0 +1,193 @@
+import { showCheckoutModal } from "./checkout.js";
+import { setBodyScroll } from "./script.js";
+let cart = loadCart();
+
+function saveCart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function loadCart() {
+    const raw = JSON.parse(localStorage.getItem("cart")) || [];
+    return raw.map(item => {
+        if (item.cantidad === undefined) item.cantidad = 0;
+        if (item.precio === undefined) item.precio = 0;
+        return item;
+    });
+}
+
+function getCamisetaId(article) {
+    return article.id || article.nombre.toLowerCase();
+}
+
+function findCartItem(camisetaId, size, color) {
+    return cart.find(item => item.camisetaId === camisetaId && item.talla === size && item.color === color);
+}
+
+function createCartItem(article, size, color, quantity) {
+    return {
+        camisetaId: getCamisetaId(article),
+        nombre: article.nombre,
+        talla: size,
+        color: color,
+        cantidad: quantity,
+        precio: article.precioBase,
+        image: article.imagenes[color]
+    };
+}
+
+function addToCart(article, size, color, quantity) {
+    const camisetaId = getCamisetaId(article);
+    const existing = findCartItem(camisetaId, size, color);
+    if (existing) {
+        existing.cantidad += quantity;
+    } else {
+        cart.push(createCartItem(article, size, color, quantity));
+    }
+}
+
+function handleCartButtonClick(article) {
+    const nameId = article.nombre.toLowerCase();
+    const size = document.getElementById(nameId + "-tallas-select").value;
+    const color = document.getElementById(nameId + "-colores-select").value;
+    const quantity = parseInt(document.getElementById(nameId + "-quantity").value);
+    if (quantity <= 0) return;
+    addToCart(article, size, color, quantity);
+    document.getElementById(nameId + "-quantity").value = 0;
+    saveCart();
+    updateCartBadge();
+    renderCart();
+}
+
+export function createBtnCart(article) {
+    const btn = document.createElement("input");
+    btn.type = "button";
+    btn.value = "Añadir al carrito";
+    btn.className = "btn-cesta";
+    btn.addEventListener("click", () => handleCartButtonClick(article));
+    return btn;
+}
+
+function updateCartBadge() {
+    const badge = document.getElementById("cartCount");
+    const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+    badge.textContent = totalItems;
+    badge.style.display = totalItems > 0 ? "block" : "none";
+}
+
+function getCartTotals(cart) {
+    return cart.reduce((acc, i) => {
+        acc.items += i.cantidad;
+        acc.price += i.precio * i.cantidad;
+        return acc;
+    }, { items: 0, price: 0 });
+}
+
+function renderCartItem(item, i) {
+    return `<div class="cart-item">
+        <img src="${item.image}" alt="${item.nombre}">
+        <div class="cart-item-info">
+            <strong>${item.nombre}</strong>
+            <span>${item.talla} / ${item.color}</span>
+            <span>${item.cantidad} x ${(item.precio ?? 0).toFixed(2)}€</span>
+        </div>
+        <div class="cart-item-actions">
+            <button class="cart-item-minus" data-index="${i}">&minus;</button>
+            <button class="cart-item-remove" data-index="${i}">&times;</button>
+        </div>
+    </div>`;
+}
+
+function renderCartItems(cart) {
+    return cart.map(renderCartItem).join('');
+}
+
+function renderCartFooter(totalItems, totalPrice) {
+    return `<div class="cart-total">
+        <span>${totalItems} artículo${totalItems > 1 ? "s" : ""}</span>
+        <strong>${totalPrice.toFixed(2)}€</strong>
+    </div>
+    <div class="cart-actions">
+        <button class="cart-clear-all">Vaciar carrito</button>
+        <button class="cart-checkout">Checkout</button>
+    </div>`;
+}
+
+function buildCartHTML() {
+    const { items, price } = getCartTotals(cart);
+    return `${renderCartItems(cart)}${renderCartFooter(items, price)}`;
+}
+
+function attachMinusHandlers(popup) {
+    popup.querySelectorAll(".cart-item-minus").forEach(btn => {
+        btn.addEventListener("click", e => {
+            const i = parseInt(e.target.dataset.index);
+            cart[i].cantidad--;
+            if (cart[i].cantidad <= 0) cart.splice(i, 1);
+            saveCart();
+            updateCartBadge();
+            renderCart();
+        });
+    });
+}
+
+function attachRemoveHandlers(popup) {
+    popup.querySelectorAll(".cart-item-remove").forEach(btn => {
+        btn.addEventListener("click", e => {
+            cart.splice(parseInt(e.target.dataset.index), 1);
+            saveCart();
+            updateCartBadge();
+            renderCart();
+        });
+    });
+}
+
+function attachClearHandler(popup) {
+    const clearBtn = popup.querySelector('.cart-clear-all');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            cart = [];
+            saveCart();
+            updateCartBadge();
+            renderCart();
+        });
+    }
+}
+
+function attachCheckoutHandler(popup) {
+    const checkoutBtn = popup.querySelector('.cart-checkout');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            popup.classList.remove('visible');
+            showCheckoutModal(cart, saveCart, updateCartBadge, renderCart);
+        });
+    }
+}
+
+function renderCart() {
+    const popup = document.getElementById("cartPopup");
+    if (cart.length === 0) {
+        popup.innerHTML = '<p class="cart-empty">El carrito está vacío</p>';
+        return;
+    }
+    popup.innerHTML = buildCartHTML();
+    attachMinusHandlers(popup);
+    attachRemoveHandlers(popup);
+    attachClearHandler(popup);
+    attachCheckoutHandler(popup);
+}
+
+function setupCartToggle(popup, overlay) {
+    const cartEl = document.querySelector(".cart");
+    cartEl.addEventListener("click", e => {
+        if (e.target.closest(".cart-popup")) return;
+        const visible = popup.classList.toggle("visible");
+        overlay.classList.toggle("visible", visible);
+        setBodyScroll(visible);
+    });
+}
+
+export function initCart(popup, overlay) {
+    setupCartToggle(popup, overlay);
+    updateCartBadge();
+    renderCart();
+}
