@@ -8,7 +8,9 @@ const PORT = 3001;
 
 // Middlewares globales
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://127.0.0.1:3000'
+}));
 
 // Log mínimo
 app.use((req, res, next) => {
