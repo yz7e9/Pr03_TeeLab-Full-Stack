@@ -20,7 +20,7 @@ Or start the production server:
 npm start
 ```
 
-The server will be available at `http://localhost:3001`.
+The server will be available at `http://localhost:3002`.
 
 ## API Endpoints
 

@@ -1,3 +1,5 @@
+import { serverURL } from "./script.js";
+
 function renderModalContent(cart) {
     return `
         ${getHeader('Revisar pedido')}
@@ -66,7 +68,7 @@ function getCheckoutPayload(cart) {
 }
 
 async function postOrder(payload) {
-    const response = await fetch('http://localhost:3001/api/comandas', {
+    const response = await fetch(`${serverURL}/api/comandas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -79,7 +81,7 @@ async function postOrder(payload) {
 }
 
 async function getOrderDetails(orderId) {
-    const resp = await fetch(`http://localhost:3001/api/comandas/${orderId}`);
+    const resp = await fetch(`${serverURL}/api/comandas/${orderId}`);
     if (!resp.ok) {
         const err = await resp.json();
         throw new Error('Error fetching order details: ' + (err.message || resp.statusText));

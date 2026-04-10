@@ -4,7 +4,7 @@ import camisetasRouter from './routes/camisetas.route.js';
 import comandasRouter from './routes/comandas.route.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = 3002;
 
 // Middlewares globales
 app.use(express.json());

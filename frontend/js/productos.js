@@ -1,4 +1,5 @@
 import { createBtnCart } from "./cart.js"
+import { serverURL } from "./script.js";
 
 function buildQueryParams() {
     const params = new URLSearchParams();
@@ -115,7 +116,7 @@ function createAmount(product) {
 
 async function fetchAndRender() {
     const query = buildQueryParams();
-    const url = `http://localhost:3001/api/camisetas${query ? '?' + query : ''}`;
+    const url = `${serverURL}/api/camisetas${query ? '?' + query : ''}`;
     const resp = await fetch(url);
     const data = await resp.json();
     clearProducts();
@@ -143,7 +144,7 @@ function attachListeners() {
     sortEl && sortEl.addEventListener('change', handler);
 }
 
-export function initProductos() {
+export function initProducts() {
     attachListeners();
     fetchAndRender();
 }

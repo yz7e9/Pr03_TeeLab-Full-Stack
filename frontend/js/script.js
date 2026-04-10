@@ -1,6 +1,8 @@
 import { initCart } from "./cart.js";
 import { initProducts } from "./productos.js"
 
+export const serverURL = "http://localhost:3002"
+
 export function setBodyScroll(visible) {
     if (visible) {
         document.body.classList.add('no-scroll');
