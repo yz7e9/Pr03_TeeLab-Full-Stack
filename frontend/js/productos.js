@@ -2,26 +2,32 @@ import { createBtnCart } from "./cart.js"
 import { serverURL } from "./script.js";
 
 function buildQueryParams() {
-    const params = new URLSearchParams();
-    const size = document.getElementById('filterSize').value;
-    const color = document.getElementById('filterColor').value;
-    const tag = document.getElementById('filterTag').value;
-    const q = document.getElementById('searchInput').value.trim();
-    let sort = document.getElementById('sortBy').value;
-
-
-    if (size) params.append('talla', size);
-    if (color) params.append('color', color);
-    if (tag) params.append('tag', tag);
-    if (q) params.append('q', q);
-    if (sort) params.append('sort', sort);
-
-    return params.toString();
+    try {
+        const params = new URLSearchParams();
+        const size = document.getElementById('filterSize').value;
+        const color = document.getElementById('filterColor').value;
+        const tag = document.getElementById('filterTag').value;
+        const q = document.getElementById('searchInput').value.trim();
+        let sort = document.getElementById('sortBy').value;
+        if (size) params.append('talla', size);
+        if (color) params.append('color', color);
+        if (tag) params.append('tag', tag);
+        if (q) params.append('q', q);
+        if (sort) params.append('sort', sort);
+        return params.toString();
+    } catch (e) {
+        console.error('Error building query params:', e);
+        return '';
+    }
 }
 
 function clearProducts() {
-    const section = document.getElementById('productos');
-    while (section.firstChild) section.removeChild(section.firstChild);
+    try {
+        const section = document.getElementById('productos');
+        while (section.firstChild) section.removeChild(section.firstChild);
+    } catch (e) {
+        console.error('Error clearing products section:', e);
+    }
 }
 
 function createArticle(product) {
@@ -115,33 +121,35 @@ function createAmount(product) {
 }
 
 async function fetchAndRender() {
-    const query = buildQueryParams();
-    const url = `${serverURL}/api/camisetas${query ? '?' + query : ''}`;
-    const resp = await fetch(url);
-    const data = await resp.json();
-    clearProducts();
-    const section = document.getElementById('productos');
-    if (Array.isArray(data)) {
+    try {
+        const query = buildQueryParams();
+        const url = `${serverURL}/api/camisetas${query ? '?' + query : ''}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        clearProducts();
+        const section = document.getElementById('productos');
         data.forEach(p => section.appendChild(createArticle(p)));
-    } else {
-        console.error('Unexpected response format', data);
+    } catch (e) {
+        console.error('Error fetching and rendering products:', e);
     }
 }
 
 function attachListeners() {
-    const sizeEl = document.getElementById('filterSize');
-    const colorEl = document.getElementById('filterColor');
-    const tagEl = document.getElementById('filterTag');
-    const searchEl = document.getElementById('searchInput');
-    const sortEl = document.getElementById('sortBy');
-
-    const handler = () => fetchAndRender();
-
-    sizeEl && sizeEl.addEventListener('change', handler);
-    colorEl && colorEl.addEventListener('change', handler);
-    tagEl && tagEl.addEventListener('change', handler);
-    searchEl && searchEl.addEventListener('input', handler);
-    sortEl && sortEl.addEventListener('change', handler);
+    try {
+        const sizeEl = document.getElementById('filterSize');
+        const colorEl = document.getElementById('filterColor');
+        const tagEl = document.getElementById('filterTag');
+        const searchEl = document.getElementById('searchInput');
+        const sortEl = document.getElementById('sortBy');
+        const handler = () => fetchAndRender();
+        if (sizeEl) sizeEl.addEventListener('change', handler);
+        if (colorEl) colorEl.addEventListener('change', handler);
+        if (tagEl) tagEl.addEventListener('change', handler);
+        if (searchEl) searchEl.addEventListener('input', handler);
+        if (sortEl) sortEl.addEventListener('change', handler);
+    } catch (e) {
+        console.error('Error attaching filter listeners:', e);
+    }
 }
 
 export function initProducts() {

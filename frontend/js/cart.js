@@ -46,16 +46,23 @@ function addToCart(article, size, color, quantity) {
 }
 
 function handleCartButtonClick(article) {
-    const nameId = article.nombre.toLowerCase();
-    const size = document.getElementById(nameId + "-tallas-select").value;
-    const color = document.getElementById(nameId + "-colores-select").value;
-    const quantity = parseInt(document.getElementById(nameId + "-quantity").value);
-    if (quantity <= 0) return;
-    addToCart(article, size, color, quantity);
-    document.getElementById(nameId + "-quantity").value = 0;
-    saveCart();
-    updateCartBadge();
-    renderCart();
+    try {
+        const nameId = article.nombre.toLowerCase();
+        const sizeEl = document.getElementById(nameId + "-tallas-select");
+        const colorEl = document.getElementById(nameId + "-colores-select");
+        const quantityEl = document.getElementById(nameId + "-quantity");
+        const size = sizeEl.value;
+        const color = colorEl.value;
+        const quantity = parseInt(quantityEl.value);
+        if (quantity <= 0) return;
+        addToCart(article, size, color, quantity);
+        quantityEl.value = 0;
+        saveCart();
+        updateCartBadge();
+        renderCart();
+    } catch (e) {
+        console.error('Error handling cart button click:', e);
+    }
 }
 
 export function createBtnCart(article) {
@@ -120,12 +127,18 @@ function buildCartHTML() {
 function attachMinusHandlers(popup) {
     popup.querySelectorAll(".cart-item-minus").forEach(btn => {
         btn.addEventListener("click", e => {
-            const i = parseInt(e.target.dataset.index);
-            cart[i].cantidad--;
-            if (cart[i].cantidad <= 0) cart.splice(i, 1);
-            saveCart();
-            updateCartBadge();
-            renderCart();
+            try {
+                const i = parseInt(e.target.dataset.index);
+                cart[i].cantidad--;
+                if (cart[i].cantidad <= 0) {
+                    cart.splice(i, 1);
+                }
+                saveCart();
+                updateCartBadge();
+                renderCart();
+            } catch (error) {
+                console.error("Error handling minus button:", error.message);
+            }
         });
     });
 }
@@ -133,57 +146,76 @@ function attachMinusHandlers(popup) {
 function attachRemoveHandlers(popup) {
     popup.querySelectorAll(".cart-item-remove").forEach(btn => {
         btn.addEventListener("click", e => {
-            cart.splice(parseInt(e.target.dataset.index), 1);
-            saveCart();
-            updateCartBadge();
-            renderCart();
+            try {
+                const idx = parseInt(e.target.dataset.index);
+                if (!isNaN(idx)) {
+                    cart.splice(idx, 1);
+                    saveCart();
+                    updateCartBadge();
+                    renderCart();
+                }
+            } catch (err) {
+                console.error('Error in remove handler:', err);
+            }
         });
     });
 }
 
 function attachClearHandler(popup) {
-    const clearBtn = popup.querySelector('.cart-clear-all');
-    if (clearBtn) {
+    try {
+        const clearBtn = popup.querySelector('.cart-clear-all');
         clearBtn.addEventListener('click', () => {
             cart = [];
             saveCart();
             updateCartBadge();
             renderCart();
         });
+    } catch (e) {
+        console.error('Error in clear handler:', e);
     }
 }
 
 function attachCheckoutHandler(popup) {
-    const checkoutBtn = popup.querySelector('.cart-checkout');
-    if (checkoutBtn) {
+    try {
+        const checkoutBtn = popup.querySelector('.cart-checkout');
         checkoutBtn.addEventListener('click', () => {
             popup.classList.remove('visible');
             showCheckoutModal(cart, saveCart, updateCartBadge, renderCart);
         });
+    } catch (e) {
+        console.error('Error in checkout handler:', e);
     }
 }
 
 function renderCart() {
-    const popup = document.getElementById("cartPopup");
-    if (cart.length === 0) {
-        popup.innerHTML = '<p class="cart-empty">El carrito está vacío</p>';
-        return;
+    try {
+        const popup = document.getElementById("cartPopup");
+        popup.innerHTML = buildCartHTML();
+        attachMinusHandlers(popup);
+        attachRemoveHandlers(popup);
+        attachClearHandler(popup);
+        attachCheckoutHandler(popup);
+    } catch (e) {
+        console.error('Error rendering cart:', e);
     }
-    popup.innerHTML = buildCartHTML();
-    attachMinusHandlers(popup);
-    attachRemoveHandlers(popup);
-    attachClearHandler(popup);
-    attachCheckoutHandler(popup);
 }
 
 function setupCartToggle(popup, overlay) {
-    const cartEl = document.querySelector(".cart");
-    cartEl.addEventListener("click", e => {
-        if (e.target.closest(".cart-popup")) return;
-        const visible = popup.classList.toggle("visible");
-        overlay.classList.toggle("visible", visible);
-        setBodyScroll(visible);
-    });
+    try {
+        const cartEl = document.querySelector(".cart");
+        cartEl.addEventListener("click", e => {
+            try {
+                if (e.target.closest(".cart-popup")) return;
+                const visible = popup.classList.toggle("visible");
+                overlay.classList.toggle("visible", visible);
+                setBodyScroll(visible);
+            } catch (error) {
+                console.error("Error handling cart toggle click:", error.message);
+            }
+        });
+    } catch (error) {
+        console.error("Error setting up cart toggle:", error.message);
+    }
 }
 
 export function initCart(popup, overlay) {

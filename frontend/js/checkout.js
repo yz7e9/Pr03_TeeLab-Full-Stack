@@ -53,18 +53,26 @@ function renderOrderDone(data) {
 }
 
 function getCheckoutPayload(cart) {
-    const cliente = {
-        nombre: document.getElementById('checkoutName').value.trim(),
-        email: document.getElementById('checkoutEmail').value.trim()
-    };
-    const direccion = document.getElementById('checkoutAddress').value.trim();
-    const items = cart.map(item => ({
-        camisetaId: item.camisetaId,
-        talla: item.talla,
-        color: item.color,
-        cantidad: item.cantidad
-    }));
-    return { cliente, direccion, items };
+    try {
+        const nameEl = document.getElementById('checkoutName');
+        const emailEl = document.getElementById('checkoutEmail');
+        const addressEl = document.getElementById('checkoutAddress');
+        const cliente = {
+            nombre: nameEl.value.trim(),
+            email: emailEl.value.trim()
+        };
+        const direccion = addressEl.value.trim();
+        const items = cart.map(item => ({
+            camisetaId: item.camisetaId,
+            talla: item.talla,
+            color: item.color,
+            cantidad: item.cantidad
+        }));
+        return { cliente, direccion, items };
+    } catch (e) {
+        console.error('Error building checkout payload:', e);
+        return { cliente: { nombre: '', email: '' }, direccion: '', items: [] };
+    }
 }
 
 async function postOrder(payload) {
@@ -133,28 +141,34 @@ async function handleCheckoutSubmit(event, cart, saveCart, updateCartBadge, rend
 }
 
 function openCheckoutModal(cart) {
-    const overlay = document.getElementById('globalOverlay');
-    const modal = document.getElementById('checkoutModal');
-    modal.innerHTML = renderModalContent(cart);
-    overlay.classList.add('visible');
-    modal.classList.add('visible');
-    document.body.classList.add('no-scroll');
+    try {
+        const overlay = document.getElementById('globalOverlay');
+        const modal = document.getElementById('checkoutModal');
+        modal.innerHTML = renderModalContent(cart);
+        overlay.classList.add('visible');
+        modal.classList.add('visible');
+        document.body.classList.add('no-scroll');
+    } catch (e) {
+        console.error('Error opening checkout modal:', e);
+    }
 }
 
 function attachCheckoutModalEvents(cart, saveCart, updateCartBadge, renderCart) {
-    const overlay = document.getElementById('globalOverlay');
-    const modal = document.getElementById('checkoutModal');
-    const closeBtn = modal.querySelector('.checkout-close');
-    if (closeBtn) {
+    try {
+        const overlay = document.getElementById('globalOverlay');
+        const modal = document.getElementById('checkoutModal');
+        const closeBtn = modal.querySelector('.checkout-close');
         closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             overlay.classList.remove('visible');
             modal.classList.remove('visible');
             document.body.classList.remove('no-scroll');
         });
+        const form = document.getElementById('checkoutForm');
+        form.addEventListener('submit', (e) => handleCheckoutSubmit(e, cart, saveCart, updateCartBadge, renderCart));
+    } catch (e) {
+        console.error('Error attaching checkout modal events:', e);
     }
-    const form = document.getElementById('checkoutForm');
-    form.addEventListener('submit', (e) => handleCheckoutSubmit(e, cart, saveCart, updateCartBadge, renderCart));
 }
 
 export function showCheckoutModal(cart, saveCart, updateCartBadge, renderCart) {
