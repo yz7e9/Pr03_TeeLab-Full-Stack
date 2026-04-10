@@ -19,6 +19,42 @@
         </div>
     </header>
     <main>
+        <section id="filters">
+            <input type="text" id="searchInput" placeholder="Buscar...">
+            <label for="filterTag">Etiqueta:</label>
+            <select id="filterTag">
+                <option value="">Todos</option>
+                <option value="nuevo">Nuevo</option>
+                <option value="retro">Retro</option>
+                <option value="edicion-especial">Edicion especial</option>
+                <option value="premium">Premium</option>
+            </select>
+            <label for="filterSize">Talla:</label>
+            <select id="filterSize">
+                <option value="">Todos</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+            </select>
+            <label for="filterColor">Color:</label>
+            <select id="filterColor">
+                <option value="">Todos</option>
+                <option value="mostaza">Mostaza</option>
+                <option value="negro">Negro</option>
+                <option value="blanco">Blanco</option>
+                <option value="gris">Gris</option>
+                <option value="azul">Azul</option>
+            </select>
+            <label for="sortBy">Ordenar:</label>
+            <select id="sortBy">
+                <option value="nombre_asc">Nombre A-Z</option>
+                <option value="nombre_desc">Nombre Z-A</option>
+                <option value="precio_asc">Precio ↑</option>
+                <option value="precio_desc">Precio ↓</option>
+            </select>
+        </section>
         <section id="productos"></section>
     </main>
     <footer></footer>
