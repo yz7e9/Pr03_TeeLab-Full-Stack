@@ -1,0 +1,33 @@
+{
+  "name": "pr03_teelab-full-stack",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/yz7e9/Pr03_TeeLab-Full-Stack#readme",
+  "bugs": {
+    "url": "https://github.com/yz7e9/Pr03_TeeLab-Full-Stack/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yz7e9/Pr03_TeeLab-Full-Stack.git"
+  },
+  "license": "ISC",
+  "author": "yz7e9",
+  "type": "module",
+  "main": "backend/server.js",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "dev": "nodemon backend/server.js",
+    "start": "node backend/server.js",
+    "serve": "npx serve frontend"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "serve": "^14.2.6"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  }
+}

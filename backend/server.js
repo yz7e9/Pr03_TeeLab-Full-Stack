@@ -8,8 +8,11 @@ const PORT = 3002;
 
 // Middlewares globales
 app.use(express.json());
+
+// Reference: https://expressjs.com/en/resources/middleware/cors.html
 app.use(cors({
-    origin: 'http://127.0.0.1:3000'
+    origin: ['http://127.0.0.1:3000', 'http://localhost:3000'],
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }));
 
 // Log mínimo

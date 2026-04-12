@@ -3,7 +3,7 @@ import fs from "fs/promises";
 export let comandas = [];
 
 let currentID = 1;
-const filePath = "./data/comandas.json";
+const filePath = "./backend/data/comandas.json";
 
 export function nextID() {
     const id = String(currentID).padStart(4, '0');
