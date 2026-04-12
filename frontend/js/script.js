@@ -3,6 +3,8 @@ import { initProducts } from "./productos.js"
 
 export const serverURL = "http://localhost:3002"
 
+export const createEl = (tag, props = {}) => Object.assign(document.createElement(tag), props);
+
 export function setBodyScroll(visible) {
     try {
         if (visible) {
@@ -18,21 +20,14 @@ export function setBodyScroll(visible) {
 export function createPopupElements() {
     try {
         const cartEl = document.querySelector(".cart");
-        const popup = document.createElement("div");
-        popup.id = "cartPopup";
-        popup.className = "cart-popup";
+        const popup = createEl("div", { id: "cartPopup", className: "cart-popup" });
+        const overlay = createEl("div", { id: "globalOverlay", className: "global-overlay" });
+        const checkoutModal = createEl("div", { id: "checkoutModal", className: "checkout-modal" });
         cartEl.appendChild(popup);
-        const overlay = document.createElement("div");
-        overlay.id = "globalOverlay";
-        overlay.className = "global-overlay";
-        document.body.appendChild(overlay);
-        const checkoutModal = document.createElement("div");
-        checkoutModal.id = "checkoutModal";
-        checkoutModal.className = "checkout-modal";
-        document.body.appendChild(checkoutModal);
+        document.body.append(overlay, checkoutModal);
         return { popup, overlay };
     } catch (e) {
-        console.error('Error creating popup elements:', e);
+        console.error("Error creating popup elements:", e);
         return { popup: null, overlay: null };
     }
 }

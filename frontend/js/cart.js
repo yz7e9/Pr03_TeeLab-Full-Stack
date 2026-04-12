@@ -48,14 +48,11 @@ function addToCart(article, size, color, quantity) {
 function handleCartButtonClick(article) {
     try {
         const nameId = article.nombre.toLowerCase();
-        const sizeEl = document.getElementById(nameId + "-tallas-select");
         const colorEl = document.getElementById(nameId + "-colores-select");
         const quantityEl = document.getElementById(nameId + "-quantity");
-        const size = sizeEl.value;
-        const color = colorEl.value;
         const quantity = parseInt(quantityEl.value);
         if (quantity <= 0) return;
-        addToCart(article, size, color, quantity);
+        addToCart(article, document.getElementById(nameId + "-tallas-select").value, colorEl.value, quantity);
         quantityEl.value = 0;
         saveCart();
         updateCartBadge();
@@ -130,9 +127,7 @@ function attachMinusHandlers(popup) {
             try {
                 const i = parseInt(e.target.dataset.index);
                 cart[i].cantidad--;
-                if (cart[i].cantidad <= 0) {
-                    cart.splice(i, 1);
-                }
+                if (cart[i].cantidad <= 0) cart.splice(i, 1);
                 saveCart();
                 updateCartBadge();
                 renderCart();
@@ -143,22 +138,22 @@ function attachMinusHandlers(popup) {
     });
 }
 
+function handleRemoveClick(e) {
+    try {
+        const idx = Number(e.target.dataset.index);
+        if (!Number.isInteger(idx)) return;
+        cart.splice(idx, 1);
+        saveCart();
+        updateCartBadge();
+        renderCart();
+    } catch (err) {
+        console.error('Error in remove handler:', err);
+    }
+}
+
 function attachRemoveHandlers(popup) {
-    popup.querySelectorAll(".cart-item-remove").forEach(btn => {
-        btn.addEventListener("click", e => {
-            try {
-                const idx = parseInt(e.target.dataset.index);
-                if (!isNaN(idx)) {
-                    cart.splice(idx, 1);
-                    saveCart();
-                    updateCartBadge();
-                    renderCart();
-                }
-            } catch (err) {
-                console.error('Error in remove handler:', err);
-            }
-        });
-    });
+    popup.querySelectorAll(".cart-item-remove")
+        .forEach(btn => btn.addEventListener("click", handleRemoveClick));
 }
 
 function attachClearHandler(popup) {
@@ -190,10 +185,7 @@ function attachCheckoutHandler(popup) {
 function renderCart() {
     try {
         const popup = document.getElementById("cartPopup");
-        if (cart.length === 0) {
-            popup.innerHTML = `<p class="cart-empty">El carrito está vacío</p>`;
-            return;
-        }
+        if (cart.length === 0) return popup.innerHTML = `<p class="cart-empty">El carrito está vacío</p>`;
         popup.innerHTML = buildCartHTML();
         attachMinusHandlers(popup);
         attachRemoveHandlers(popup);
@@ -206,8 +198,7 @@ function renderCart() {
 
 function setupCartToggle(popup, overlay) {
     try {
-        const cartEl = document.querySelector(".cart");
-        cartEl.addEventListener("click", e => {
+        document.querySelector(".cart").addEventListener("click", e => {
             try {
                 if (e.target.closest(".cart-popup")) return;
                 const visible = popup.classList.toggle("visible");
