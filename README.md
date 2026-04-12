@@ -76,3 +76,9 @@ JSON body example of an POST request:
 ```
 
 Returns `201 Created` with the created order summary.
+
+---
+
+## Video
+
+![Pr03_TeeLab-Full-Stack](./Pr03_TeeLab-Full-Stack.mp4)
