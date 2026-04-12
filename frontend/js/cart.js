@@ -190,6 +190,10 @@ function attachCheckoutHandler(popup) {
 function renderCart() {
     try {
         const popup = document.getElementById("cartPopup");
+        if (cart.length === 0) {
+            popup.innerHTML = `<p class="cart-empty">El carrito está vacío</p>`;
+            return;
+        }
         popup.innerHTML = buildCartHTML();
         attachMinusHandlers(popup);
         attachRemoveHandlers(popup);
